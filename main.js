@@ -76,8 +76,8 @@ function draw() {
 			const angle = Math.atan2(positionY - y, positionX - x);
 
 			// Calcular distorção da posição (utilizando função de Gauss)
-			const offsetX = Math.cos(angle) * Math.E ** (-0.001 * distance) ** 2 * inputDistortion.value
-			const offsetY = Math.sin(angle) * Math.E ** (-0.001 * distance) ** 2 * inputDistortion.value
+			const offsetX = Math.cos(angle) * Math.E ** -((0.001 * distance) ** 2) * inputDistortion.value
+			const offsetY = Math.sin(angle) * Math.E ** -((0.001 * distance) ** 2) * inputDistortion.value
 
 			// Desenhar bolinha
 			context.arc(x - offsetX, y - offsetY, inputSize.value, 0, 2 * Math.PI)
