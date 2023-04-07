@@ -4,6 +4,12 @@
 	--background-secondary: #fefefe;
 }
 
+:root.dark-mode {
+	--text-color: #eee;
+	--background-primary: #333;
+	--background-secondary: #222;
+}
+
 html {
 	height: 100%;
 }

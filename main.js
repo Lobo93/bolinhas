@@ -1,62 +1,54 @@
 const context = canvas.getContext('2d')
 
 const time = 60/1000 //60 frames por segundo
-let mouseX = 0
-let mouseY = 0
-let positionX = 0
-let positionY = 0
+let mouseX = -1000
+let mouseY = -1000
+let positionX = -1001
+let positionY = -1001
 
 // Modo escuro
 let darkMode = false
 
 darkModeButton.addEventListener('click', () => {
-	if (darkMode) {
-		darkMode = false
-		darkModeButton.textContent = '☼'
-		document.documentElement.style.setProperty('--text-color', '#333')
-		document.documentElement.style.setProperty('--background-primary', '#eee')
-		document.documentElement.style.setProperty('--background-secondary', '#fefefe')
-	}
-	else {
-		darkMode = true
-		darkModeButton.textContent = '☽'
-		document.documentElement.style.setProperty('--text-color', '#eee')
-		document.documentElement.style.setProperty('--background-primary', '#333')
-		document.documentElement.style.setProperty('--background-secondary', '#222')
-	}
+	const root = document.documentElement
+	root.classList.toggle('dark-mode')
+	darkModeButton.textContent = root.classList.contains('dark-mode') ? '☽' : '☼'
 })
 
-// Atualizar posição pelo mouse
-window.addEventListener('mousemove', ({x,y}) => {
+// Atualizar posição do mouse
+function updateMousePosition(x,y) {
 	mouseX = x - canvas.getBoundingClientRect().left
 	mouseY = y - canvas.getBoundingClientRect().top
-})
-
-//Atualizar posição pelo toque
-window.addEventListener('touchmove', ({touches}) => {
-	mouseX = touches[0].pageX - canvas.getBoundingClientRect().left
-	mouseY = touches[0].pageY - canvas.getBoundingClientRect().top
-})
+}
+window.addEventListener('mousemove', ({pageX,pageY}) => updateMousePosition(pageX,pageY))
+window.addEventListener('touchmove', ({touches}) => updateMousePosition(touches[0].pageX,touches[0].pageY))
 
 // Desenhar bolinhas a cada tantos milissegundos
 setInterval(draw, time)
 
 function draw() {
+	// Calcular diferença de posição
+	const differenceX = mouseX - positionX
+	const differenceY = mouseY - positionY
+
+	// Encerrar função se a posição não foi muito alterada desde o último frame
+	if (Math.abs(differenceX) + Math.abs(differenceY) < 1) return
+
 	// Limpar canvas
 	context.clearRect(0, 0, canvas.width, canvas.height)
 
 	// Atualizar posição
-	positionX += (mouseX - positionX) * 0.1
-	positionY += (mouseY - positionY) * 0.1
+	positionX += differenceX * 0.1
+	positionY += differenceY * 0.1
 
 	// Criar gradiente
 	const gradient = context.createLinearGradient(0, 0, canvas.clientWidth, 0)
-	gradient.addColorStop(1/7, 'red');
-	gradient.addColorStop(2/7, 'orange');
-	gradient.addColorStop(3/7, 'yellow');
-	gradient.addColorStop(4/7, 'green');
-	gradient.addColorStop(5/7, 'cyan');
-	gradient.addColorStop(6/7, 'blue');
+	gradient.addColorStop(0, 'red');
+	gradient.addColorStop(1/6, 'orange');
+	gradient.addColorStop(2/6, 'yellow');
+	gradient.addColorStop(3/6, 'green');
+	gradient.addColorStop(4/6, 'cyan');
+	gradient.addColorStop(5/6, 'blue');
 	gradient.addColorStop(1, 'purple');
 	context.fillStyle = gradient
 
@@ -64,8 +56,8 @@ function draw() {
 	context.beginPath();
 
 	// Bolinhas
-	for (let x = 0; x < canvas.width; x += 20) {
-		for (let y = 0; y < canvas.height; y += 20) {
+	for (let x = 0; x <= canvas.width; x += 20) {
+		for (let y = 0; y <= canvas.height; y += 20) {
 			// Posição da bolinha
 			context.moveTo(x,y)
 
